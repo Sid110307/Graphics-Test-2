@@ -1,13 +1,18 @@
-CFLAGS=-std=c++17 -pedantic -Wall -Wextra -Wno-unknown-pragmas
-LIBS=-lGL -lGLU -lglut
+CC=clang++
+EXECUTABLE_DIR=bin
+
+CPPFLAGS=-std=c++20 -pedantic -g
+CPPWARNINGS=-Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter
+LIBS=-lGL -lGLU -lglut -lGLEW -lassimp -lSOIL
 
 .PHONY: all
-all: graphicsTest
+all: graphicsTest2
 
-graphicsTest: src/main.cpp
-	mkdir -p bin
-	clang++ $(CFLAGS) -o bin/$@ $< $(LIBS)
-	./bin/$@
+graphicsTest2: src/main.cpp
+	mkdir -p $(EXECUTABLE_DIR)
+	$(CC) $(CPPFLAGS) $(CPPWARNINGS) -o $(EXECUTABLE_DIR)/$@ $< $(LIBS)
+	chmod +x $(EXECUTABLE_DIR)/$@
+	./$(EXECUTABLE_DIR)/$@
 
 clean:
-	rm -rf bin/*
+	rm -rf $(EXECUTABLE_DIR)
