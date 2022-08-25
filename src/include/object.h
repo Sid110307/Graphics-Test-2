@@ -6,9 +6,6 @@ class [[maybe_unused]] Object
 {
 public:
 	[[maybe_unused]] Object(GLfloat _x, GLfloat _y, GLfloat _z);
-
-	// TODO: Remove one of these functions
-	[[maybe_unused]] virtual void draw() = 0;
 	[[maybe_unused]] virtual void init() = 0;
 
 	[[maybe_unused]] virtual auto getX() -> GLfloat;

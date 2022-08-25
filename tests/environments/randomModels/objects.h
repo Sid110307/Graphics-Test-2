@@ -19,30 +19,6 @@ public:
 		{
 		}
 
-		void draw() override
-		{
-			glTranslatef(0.0f, 0.0f, 0.0f);
-			glColor3f(1.0f, 1.0f, 1.0f);
-
-			glTranslatef(0.0f, 0.75f, 0.0f);
-			glutSolidSphere(0.75f, 20, 20);
-
-			glTranslatef(0.0f, 0.95f, 0.0f);
-			glutSolidSphere(0.25f, 20, 20);
-
-			glPushMatrix();
-			glColor3f(0.0f, 0.0f, 0.0f);
-			glTranslatef(0.05f, 0.10f, 0.18f);
-			glutSolidSphere(0.05f, 10, 10);
-			glTranslatef(-0.1f, 0.0f, 0.0f);
-			glutSolidSphere(0.05f, 10, 10);
-			glPopMatrix();
-
-			glColor3f(1.0f, 0.5f, 0.5f);
-			glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-			glutSolidCone(0.08f, 0.5f, 10, 2);
-		}
-
 		void init() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
@@ -53,7 +29,26 @@ public:
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					draw();
+					glColor3f(1.0f, 1.0f, 1.0f);
+
+					glTranslatef(0.0f, 0.75f, 0.0f);
+					glutSolidSphere(0.75f, 20, 20);
+
+					glTranslatef(0.0f, 0.95f, 0.0f);
+					glutSolidSphere(0.25f, 20, 20);
+
+					glPushMatrix();
+					glColor3f(0.0f, 0.0f, 0.0f);
+					glTranslatef(0.05f, 0.10f, 0.18f);
+					glutSolidSphere(0.05f, 10, 10);
+					glTranslatef(-0.1f, 0.0f, 0.0f);
+					glutSolidSphere(0.05f, 10, 10);
+					glPopMatrix();
+
+					glColor3f(1.0f, 0.5f, 0.5f);
+					glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+					glutSolidCone(0.08f, 0.5f, 10, 2);
+
 					glPopMatrix();
 				}
 
@@ -75,18 +70,6 @@ public:
 		{
 		}
 
-		void draw() override
-		{
-			glTranslatef(0.0f, 0.0f, 0.0f);
-			glColor3f(0.121f, 0.616f, 1.0f);
-
-			glutSolidCube(1.0f);
-			glTranslatef(0.0f, 1.0f, 0.0f);
-			glutSolidCube(1.0f);
-
-			glColor3f(1.0f, 1.0f, 1.0f);
-		}
-
 		void init() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
@@ -97,7 +80,13 @@ public:
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					draw();
+					glColor3f(0.121f, 0.616f, 1.0f);
+
+					glutSolidCube(1.0f);
+					glTranslatef(0.0f, 1.0f, 0.0f);
+					glutSolidCube(1.0f);
+
+					glColor3f(1.0f, 1.0f, 1.0f);
 					glPopMatrix();
 				}
 
@@ -119,11 +108,6 @@ public:
 		{
 		}
 
-		void draw() override
-		{
-			// TODO: Draw tree
-		}
-
 		void init() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
@@ -134,7 +118,14 @@ public:
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					draw();
+					glColor3f(0.0f, 0.5f, 0.0f);
+
+					glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+					glutSolidCone(0.25f, 1.0f, 10, 2);
+
+					glTranslatef(0.0f, 1.0f, 0.0f);
+					glutSolidSphere(0.5f, 10, 10);
+
 					glPopMatrix();
 				}
 
@@ -154,13 +145,6 @@ public:
 		{
 		}
 
-		void draw() override
-		{
-			glTranslatef(0.0f, 0.0f, 0.0f);
-			glColor3f(0.83f, 0.95f, 0.98f);
-			glutSolidCube(1.0f);
-		}
-
 		void init() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
@@ -171,7 +155,9 @@ public:
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					draw();
+
+					glColor3f(0.83f, 0.95f, 0.98f);
+					glutSolidCube(1.0f);
 					glPopMatrix();
 				}
 
@@ -193,13 +179,6 @@ public:
 		{
 		}
 
-		void draw() override
-		{
-			glTranslatef(0.0f, 0.0f, 0.0f);
-			glColor3f(1.0f, 0.98f, 0.98f);
-			glutSolidCube(1.0f);
-		}
-
 		void init() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
@@ -210,7 +189,9 @@ public:
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					draw();
+
+					glColor3f(1.0f, 0.98f, 0.98f);
+					glutSolidCube(1.0f);
 					glPopMatrix();
 				}
 

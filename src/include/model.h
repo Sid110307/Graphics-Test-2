@@ -15,7 +15,6 @@ public:
 	Model(std::string, GLfloat, GLfloat, GLfloat);
 	~Model();
 
-	void draw() override;
 	void init() override;
 	void showModelName(bool);
 
@@ -48,7 +47,7 @@ Model::~Model()
 	for (auto &i: textures_loaded) glDeleteTextures(1, &i.id);
 }
 
-void Model::draw()
+void Model::init()
 {
 	Shader shader;
 	shader.use();
@@ -76,11 +75,6 @@ void Model::draw()
 					   GL_FALSE, glm::value_ptr(model));
 
 	for (auto &mesh: meshes) mesh.draw(shader);
-}
-
-void Model::init()
-{
-	draw();
 
 	if (isModelNameShown)
 	{
