@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include "../../../include/object.h"
+#include "../../../src/include/object.h"
 
 class BuiltinModels
 {
@@ -62,7 +62,7 @@ public:
 					(GLint) (SNOWMAN_SPREAD * 2 * SNOWMAN_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 5.0f);
+			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 							 (const unsigned char*) txt.c_str());
 		}
@@ -106,7 +106,7 @@ public:
 					(GLint) (BUILDING_SPREAD * 2 * BUILDING_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 4.0f);
+			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 							 (const unsigned char*) txt.c_str());
 		}
@@ -141,7 +141,7 @@ public:
 			std::string txt = "Total trees: ";
 			txt += std::to_string((GLint) (TREE_SPREAD * 2 * TREE_SPREAD * 2));
 
-			glRasterPos3f(-1.0f, 5.0f, 3.0f);
+			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 							 (const unsigned char*) txt.c_str());
 		}
@@ -180,7 +180,7 @@ public:
 					(GLint) (WATER_SPREAD * 2 * WATER_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 2.0f);
+			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 							 (const unsigned char*) txt.c_str());
 		}
@@ -218,7 +218,7 @@ public:
 			txt += std::to_string((GLint) (SNOW_SPREAD * 2 * SNOW_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 1.0f);
+			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 							 (const unsigned char*) txt.c_str());
 		}

@@ -15,11 +15,9 @@ public:
 	~Shader();
 
 	void use() const;
-	[[nodiscard]] auto getProgram() const -> GLuint;
-
-private:
 	GLuint program;
 
+private:
 	const GLchar* vertexShaderSource = R"glsl(
 		#version 330 core
 
@@ -116,9 +114,4 @@ Shader::~Shader()
 void Shader::use() const
 {
 	glUseProgram(program);
-}
-
-auto Shader::getProgram() const -> GLuint
-{
-	return program;
 }

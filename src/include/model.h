@@ -21,6 +21,8 @@ public:
 
 private:
 	std::string path;
+
+	std::vector<Mesh> meshes;
 	std::vector<Mesh::Texture> textures_loaded;
 
 	bool isModelNameShown = false;
@@ -49,11 +51,11 @@ Model::~Model()
 void Model::draw()
 {
 	Shader shader;
+	shader.use();
+
 	glm::mat4 projection = glm::perspective(glm::radians(Camera::fieldOfView),
 											Camera::aspectRatio,
 											Camera::nearClip, Camera::farClip);
-
-//	shader.use();
 
 	glm::mat4 view = glm::lookAt(glm::vec3(Camera::x, Camera::y, Camera::z),
 								 glm::vec3(Camera::x + Camera::lx,
@@ -61,19 +63,19 @@ void Model::draw()
 										   Camera::z + Camera::lz),
 								 glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1,
-					   GL_FALSE,
-					   glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"),
-					   1, GL_FALSE,
-					   glm::value_ptr(projection));
+	glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1,
+					   GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1,
+					   GL_FALSE, glm::value_ptr(projection));
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(x, y, z));
-	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1,
+	glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1,
 					   GL_FALSE, glm::value_ptr(model));
+
+	for (auto &mesh: meshes) mesh.draw(shader);
 }
 
 void Model::init()
@@ -85,7 +87,7 @@ void Model::init()
 		std::string txt = "Model name: ";
 		txt += path.substr(path.find_last_of("/\\") + 1);
 
-		glRasterPos3f(-1.0f, 5.0f, 4.0f);
+		glRasterPos3f(-1.0f, 5.0f, 0.0f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 						 (const unsigned char*) txt.c_str());
 	}
@@ -119,7 +121,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	for (GLuint i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		processMesh(mesh, scene);
+		meshes.push_back(processMesh(mesh, scene));
 	}
 
 	for (GLuint i = 0; i < node->mNumChildren; i++)

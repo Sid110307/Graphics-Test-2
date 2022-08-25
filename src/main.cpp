@@ -2,8 +2,8 @@
 #include <cxxopts.hpp>
 #include <iostream>
 
-#include "./tests/environments/randomModels/world.h"
-//#include "./include/model.h"
+#include "../tests/environments/randomModels/world.h"
+#include "./include/model.h"
 
 void initialize(int* argc, char** argv)
 {
@@ -36,6 +36,8 @@ void initialize(int* argc, char** argv)
 		int width = 800, height = 600;
 
 		glutInit(argc, argv);
+		glutInitContextVersion(3, 3);
+		glutInitContextProfile(GLUT_CORE_PROFILE);
 		glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 
 		glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) >> 1,
@@ -97,10 +99,11 @@ auto main(int argc, char** argv) -> int
 	glutSpecialFunc(Camera::processSpecialKeys);
 	glutMouseFunc(Camera::processMouse);
 
-//	auto model = Model("src/tests/models/nanosuit/nanosuit.obj",
-//			-20.0f, 0.0f, 120.0f);
-//	model.showModelName(true);
-//	world->addObject(&model);
+	auto model = Model(
+			"/home/sid/Desktop/Graphics Test 2/tests/models/nanosuit/nanosuit.obj",
+			-20.0f, 0.0f, 20.0f);
+	model.showModelName(true);
+	world->addObject(&model);
 
 	world->setGridRange(50.0f);
 	world->setGrid(true);

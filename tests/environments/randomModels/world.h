@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "../../../include/camera.h"
+#include "../../../src/include/camera.h"
 #include "./objects.h"
 
 class World
@@ -138,5 +138,5 @@ void World::showAxes()
 
 void World::showPerspectiveIcon()
 {
-	// TODO: Implement perspective icon/gizmo
+	// TODO: Implement perspective icon/gizmo at the top right corner of the screen.
 }
