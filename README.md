@@ -20,15 +20,15 @@
 * Clone the repository to your local machine
 
 ```bash
-git clone https://github.com/Sid110307/Graphics-Test-2.git GraphicsTest2
+$ git clone https://github.com/Sid110307/Graphics-Test-2.git GraphicsTest2
 ```
 
 * Build the project
 
 ```bash
-cd GraphicsTest2
-make -s
-# Note that it will run the program automatically after building.
+$ cd GraphicsTest2
+$ cmake --build bin --target clean -j4
+$ cmake --build bin --target graphicsTest2 -j4
 ```
 
 * Compile the examples
