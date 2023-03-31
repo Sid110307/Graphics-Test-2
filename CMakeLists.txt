@@ -8,4 +8,4 @@ set(PROJECT_SOURCE_DIR src)
 set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/main.cpp)
 
 add_executable(graphicsTest2 ${SOURCE_FILES})
-target_link_libraries(graphicsTest2 GL GLU glut GLEW assimp SOIL)
+target_link_libraries(graphicsTest2 GL GLU glut GLEW assimp stb)

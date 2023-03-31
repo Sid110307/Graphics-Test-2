@@ -5,11 +5,13 @@
 #include "./object.h"
 
 #include <GL/freeglut.h>
-#include <SOIL/SOIL.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 #include <vector>
 
-class Model : public Object
+class Model: public Object
 {
 public:
 	Model(std::string, GLfloat, GLfloat, GLfloat);
@@ -32,19 +34,19 @@ private:
 	Mesh processMesh(aiMesh*, const aiScene*);
 
 	std::vector<Mesh::Texture>
-	loadMaterial(aiMaterial*, aiTextureType, const std::string &);
-	static GLint loadTexture(const std::string &, const std::string &);
+		loadMaterial(aiMaterial*, aiTextureType, const std::string&);
+	static GLint loadTexture(const std::string&, const std::string&);
 };
 
 Model::Model(std::string _path, GLfloat _x, GLfloat _y, GLfloat _z)
-		: Object(_x, _y, _z), path(std::move(_path))
+	: Object(_x, _y, _z), path(std::move(_path))
 {
 	loadModel();
 }
 
 Model::~Model()
 {
-	for (auto &i: textures_loaded) glDeleteTextures(1, &i.id);
+	for (auto& i : textures_loaded) glDeleteTextures(1, &i.id);
 }
 
 void Model::init()
@@ -53,28 +55,28 @@ void Model::init()
 	shader.use();
 
 	glm::mat4 projection = glm::perspective(glm::radians(Camera::fieldOfView),
-											Camera::aspectRatio,
-											Camera::nearClip, Camera::farClip);
+		Camera::aspectRatio,
+		Camera::nearClip, Camera::farClip);
 
 	glm::mat4 view = glm::lookAt(glm::vec3(Camera::x, Camera::y, Camera::z),
-								 glm::vec3(Camera::x + Camera::lx,
-										   Camera::y + Camera::ly,
-										   Camera::z + Camera::lz),
-								 glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::vec3(Camera::x + Camera::lx,
+			Camera::y + Camera::ly,
+			Camera::z + Camera::lz),
+		glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1,
-					   GL_FALSE, glm::value_ptr(view));
+		GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1,
-					   GL_FALSE, glm::value_ptr(projection));
+		GL_FALSE, glm::value_ptr(projection));
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(x, y, z));
 	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1,
-					   GL_FALSE, glm::value_ptr(model));
+		GL_FALSE, glm::value_ptr(model));
 
-	for (auto &mesh: meshes) mesh.draw(shader);
+	for (auto& mesh : meshes) mesh.draw(shader);
 
 	if (isModelNameShown)
 	{
@@ -83,7 +85,7 @@ void Model::init()
 
 		glRasterPos3f(-1.0f, 5.0f, 0.0f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-						 (const unsigned char*) txt.c_str());
+			(const unsigned char*)txt.c_str());
 	}
 }
 
@@ -96,13 +98,13 @@ void Model::loadModel()
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate |
-												   aiProcess_FlipUVs);
+		aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
 		!scene->mRootNode)
 	{
 		std::cerr << "Error while loading '" << path << "': "
-				  << importer.GetErrorString() << std::endl;
+			<< importer.GetErrorString() << std::endl;
 		return;
 	}
 
@@ -160,29 +162,29 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 	}
 
-	if ((GLint) mesh->mMaterialIndex >= 0)
+	if ((GLint)mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 		std::vector<Mesh::Texture> diffuseMaps = loadMaterial(material,
-															  aiTextureType_DIFFUSE,
-															  "texture_diffuse");
+			aiTextureType_DIFFUSE,
+			"texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(),
-						diffuseMaps.end());
+			diffuseMaps.end());
 
 		std::vector<Mesh::Texture> specularMaps = loadMaterial(material,
-															   aiTextureType_SPECULAR,
-															   "texture_specular");
+			aiTextureType_SPECULAR,
+			"texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(),
-						specularMaps.end());
+			specularMaps.end());
 	}
 
-	return {vertices, indices, textures};
+	return { vertices, indices, textures };
 }
 
 std::vector<Mesh::Texture>
 Model::loadMaterial(aiMaterial* mat, const aiTextureType type,
-					const std::string &typeName)
+	const std::string& typeName)
 {
 	std::vector<Mesh::Texture> textures;
 	for (GLuint i = 0; i < mat->GetTextureCount(type); i++)
@@ -191,7 +193,7 @@ Model::loadMaterial(aiMaterial* mat, const aiTextureType type,
 		mat->GetTexture(type, i, &str);
 
 		bool skip = false;
-		for (auto &texture: textures_loaded)
+		for (auto& texture : textures_loaded)
 		{
 			if (texture.path == str)
 			{
@@ -207,7 +209,7 @@ Model::loadMaterial(aiMaterial* mat, const aiTextureType type,
 			Mesh::Texture texture;
 
 			texture.id = loadTexture(str.C_Str(),
-									 path.substr(0, path.find_last_of("/\\")));
+				path.substr(0, path.find_last_of("/\\")));
 			texture.type = typeName;
 			texture.path = str;
 			textures.push_back(texture);
@@ -219,29 +221,35 @@ Model::loadMaterial(aiMaterial* mat, const aiTextureType type,
 	return textures;
 }
 
-GLint Model::loadTexture(const std::string &_path, const std::string &directory)
+GLint Model::loadTexture(const std::string& _path, const std::string& directory)
 {
 	std::string filename = directory + '/' + _path;
 	GLuint textureID;
 
 	glGenTextures(1, &textureID);
 
-	int width, height;
-	unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height,
-										   nullptr, SOIL_LOAD_RGB);
+	int width, height, nrComponents;
+	unsigned char* image = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				 GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	if (image)
+	{
+		GLenum format;
+		if (nrComponents == 1) format = GL_RED;
+		else if (nrComponents == 3) format = GL_RGB;
+		else if (nrComponents == 4) format = GL_RGBA;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-					GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-	SOIL_free_image_data(image);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else std::cerr << "Texture failed to load at path: " << filename << std::endl;
+
+	stbi_image_free(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return (GLint) textureID;

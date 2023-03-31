@@ -9,7 +9,8 @@
 * FreeGLUT (GL Utility Toolkit)
 * GLEW (GL Extension Wrangler) v4.0 or higher
 * Assimp (Asset Import Library) v5.0 or higher
-* SOIL (Simple OpenGL Image Library)
+* libstb ([https://github.com/nothings/stb](https://github.com/nothings/stb))
+* cxxopts (Lightweight C++ command-line option parser) (I could have used Boost, but idc)
 * A C++ compiler that supports C++20
     * [GCC](https://gcc.gnu.org/download/gcc.html)
     * [Clang](https://clang.llvm.org/download.html)
