@@ -47,6 +47,7 @@ Model::Model(std::string _path, GLfloat _x, GLfloat _y, GLfloat _z)
 Model::~Model()
 {
 	for (auto& i : textures_loaded) glDeleteTextures(1, &i.id);
+	GET_ERROR();
 }
 
 void Model::init()
@@ -87,6 +88,8 @@ void Model::init()
 		glutBitmapString(GLUT_BITMAP_HELVETICA_18,
 			(const unsigned char*)txt.c_str());
 	}
+
+	GET_ERROR();
 }
 
 void Model::showModelName(bool _isModelNameShown)
@@ -122,6 +125,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 	for (GLuint i = 0; i < node->mNumChildren; i++)
 		processNode(node->mChildren[i], scene);
+	GET_ERROR();
 }
 // NOLINTEND
 
@@ -179,6 +183,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			specularMaps.end());
 	}
 
+	GET_ERROR();
 	return { vertices, indices, textures };
 }
 
@@ -218,6 +223,7 @@ Model::loadMaterial(aiMaterial* mat, const aiTextureType type,
 		}
 	}
 
+	GET_ERROR();
 	return textures;
 }
 
@@ -252,5 +258,6 @@ GLint Model::loadTexture(const std::string& _path, const std::string& directory)
 	stbi_image_free(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	return (GLint) textureID;
+	GET_ERROR();
+	return (GLint)textureID;
 }

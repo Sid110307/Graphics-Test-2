@@ -59,7 +59,10 @@ public:
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-							 (const unsigned char*) txt.c_str());
+				(const unsigned char*)txt.c_str());
+
+			std::cout << "Initialized snowmen at (" << x << ", " << y << ", "
+				<< z << ")" << std::endl;
 		}
 	};
 

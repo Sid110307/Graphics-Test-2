@@ -68,6 +68,8 @@ void Camera::processNormalKeys(unsigned char key, GLint, GLint)
 		angle = 0.0;
 		glutPostRedisplay();
 	}
+
+	GET_ERROR();
 }
 
 void Camera::processSpecialKeys(GLint key, GLint, GLint)
@@ -113,6 +115,9 @@ void Camera::processSpecialKeys(GLint key, GLint, GLint)
 		default:
 			break;
 	}
+
+	glutPostRedisplay();
+	GET_ERROR();
 }
 
 void Camera::processMouse(GLint btn, GLint, GLint, GLint)
@@ -147,6 +152,7 @@ void Camera::processMouse(GLint btn, GLint, GLint, GLint)
 	}
 
 	glutPostRedisplay();
+	GET_ERROR();
 }
 
 void Camera::changeSize(GLint width, GLint height)
@@ -162,4 +168,6 @@ void Camera::changeSize(GLint width, GLint height)
 				   farClip);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	GET_ERROR();
 }

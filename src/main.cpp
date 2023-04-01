@@ -1,3 +1,10 @@
+#define GET_ERROR() \
+{ \
+	GLenum err; \
+	while ((err = glGetError()) != GL_NO_ERROR) \
+		std::cerr << "OpenGL error " << err << " in " << __func__ << " at line " << __LINE__ << "." << std::endl; \
+}
+
 #include <GL/glew.h>
 #include <cxxopts.hpp>
 #include <iostream>
@@ -36,7 +43,8 @@ void initialize(int* argc, char** argv)
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-
+	glutInitContextFlags(GLUT_DEBUG);
+	
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) >> 1,
 		(glutGet(GLUT_SCREEN_HEIGHT) - height) >> 1);
 	glutInitWindowSize(width, height);
@@ -60,12 +68,16 @@ void initialize(int* argc, char** argv)
 		glutReshapeWindow(width, height);
 	}
 
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
+
 	if (err != GLEW_OK)
 	{
 		std::cerr << "Error: " << glewGetErrorString(err) << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
+	GET_ERROR();
 }
 
 int main(int argc, char** argv)

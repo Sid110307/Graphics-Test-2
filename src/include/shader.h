@@ -17,6 +17,10 @@ public:
 	void use() const;
 	GLuint program;
 
+	void setBool(const std::string&, bool) const;
+	void setInt(const std::string&, int) const;
+	void setFloat(const std::string&, float) const;
+
 private:
 	const GLchar* vertexShaderSource = R"glsl(
 		#version 330 core
@@ -104,14 +108,36 @@ Shader::Shader()
 
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+
+	GET_ERROR();
 }
 
 Shader::~Shader()
 {
 	glDeleteProgram(program);
+	GET_ERROR();
 }
 
 void Shader::use() const
 {
 	glUseProgram(program);
+	GET_ERROR();
+}
+
+void Shader::setBool(const std::string& name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(program, name.c_str()), (int)value);
+	GET_ERROR();
+}
+
+void Shader::setInt(const std::string& name, int value) const
+{
+	glUniform1i(glGetUniformLocation(program, name.c_str()), value);
+	GET_ERROR();
+}
+
+void Shader::setFloat(const std::string& name, float value) const
+{
+	glUniform1f(glGetUniformLocation(program, name.c_str()), value);
+	GET_ERROR();
 }
