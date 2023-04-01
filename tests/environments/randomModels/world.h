@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GL/freeglut.h>
-
 #include <utility>
 
 #include "../../../src/include/camera.h"
@@ -48,7 +46,7 @@ bool World::perspectiveIcon = false;
 World::World(std::vector<Object*> _objects)
 {
 	objects = std::move(_objects);
-	GET_ERROR();
+	
 }
 
 void World::create()
@@ -58,7 +56,7 @@ void World::create()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	GET_ERROR();
+	
 }
 
 void World::display()
@@ -81,13 +79,12 @@ void World::display()
 	}
 
 	glutSwapBuffers();
-	GET_ERROR();
 }
 
 void World::addObject(Object* _object)
 {
 	objects.push_back(_object);
-	GET_ERROR();
+	
 }
 
 void World::setGridRange(GLfloat range)
@@ -116,18 +113,19 @@ auto World::setPerspectiveIcon(bool _perspectiveIcon) -> bool
 void World::showGrid()
 {
 	glBegin(GL_LINES);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
 
-	for (GLfloat i = -gridRange; i <= gridRange; i += gridRange / 10)
+	for (auto i = -gridRange; i <= gridRange; i += 0.5f)
 	{
-		glVertex3f(i, -1, gridRange);
-		glVertex3f(i, -1, -gridRange);
-		glVertex3f(gridRange, -1, i);
-		glVertex3f(-gridRange, -1, i);
+		glVertex3f(i, 0.0f, -gridRange);
+		glVertex3f(i, 0.0f, gridRange);
+
+		glVertex3f(-gridRange, 0.0f, i);
+		glVertex3f(gridRange, 0.0f, i);
 	}
 
 	glEnd();
-	GET_ERROR();
+	
 }
 
 void World::showAxes()
@@ -147,11 +145,11 @@ void World::showAxes()
 	glVertex3f(0.0f, 0.0f, gridRange / 2.5f);
 	glEnd();
 
-	GET_ERROR();
+	
 }
 
 void World::showPerspectiveIcon()
 {
 	// TODO: Implement perspective icon/gizmo at the top right corner of the screen.
-	GET_ERROR();
+	
 }

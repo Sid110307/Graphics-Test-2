@@ -76,7 +76,7 @@ void Mesh::setupMesh()
 		(GLvoid*)offsetof(Vertex, TexCoords));
 
 	glBindVertexArray(0);
-	GET_ERROR();
+	
 }
 
 void Mesh::draw(Shader& shader)
@@ -107,5 +107,5 @@ void Mesh::draw(Shader& shader)
 		nullptr);
 	glBindVertexArray(0);
 
-	GET_ERROR();
+	
 }

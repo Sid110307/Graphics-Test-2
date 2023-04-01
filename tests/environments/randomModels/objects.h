@@ -19,51 +19,46 @@ public:
 		{
 		}
 
-		void init() override
-		{
-			glTranslatef(0.0f, 0.0f, 0.0f);
-			glTranslatef(x, y / 10, z);
+		void init()
+{
+    glTranslatef(0.0f, 0.0f, 0.0f);
+    glTranslatef(x, y / 10, z);
 
-			for (GLfloat i = -SNOWMAN_SPREAD; i < SNOWMAN_SPREAD; ++i)
-				for (GLfloat j = -SNOWMAN_SPREAD; j < SNOWMAN_SPREAD; ++j)
-				{
-					glPushMatrix();
-					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					glColor3f(1.0f, 1.0f, 1.0f);
+    for (GLfloat i = -SNOWMAN_SPREAD; i < SNOWMAN_SPREAD; ++i)
+        for (GLfloat j = -SNOWMAN_SPREAD; j < SNOWMAN_SPREAD; ++j)
+        {
+            glPushMatrix();
+            glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
+            glColor3f(1.0f, 1.0f, 1.0f);
 
-					glTranslatef(0.0f, 0.75f, 0.0f);
-					glutSolidSphere(0.75f, 20, 20);
+            glTranslatef(0.0f, 0.75f, 0.0f);
+            drawSphere(0.75f, 20, 20);
 
-					glTranslatef(0.0f, 0.95f, 0.0f);
-					glutSolidSphere(0.25f, 20, 20);
+            glTranslatef(0.0f, 0.95f, 0.0f);
+            drawSphere(0.25f, 20, 20);
 
-					glPushMatrix();
-					glColor3f(0.0f, 0.0f, 0.0f);
-					glTranslatef(0.05f, 0.10f, 0.18f);
-					glutSolidSphere(0.05f, 10, 10);
-					glTranslatef(-0.1f, 0.0f, 0.0f);
-					glutSolidSphere(0.05f, 10, 10);
-					glPopMatrix();
+            glPushMatrix();
+            glColor3f(0.0f, 0.0f, 0.0f);
+            glTranslatef(0.05f, 0.10f, 0.18f);
+            drawSphere(0.05f, 10, 10);
+            glTranslatef(-0.1f, 0.0f, 0.0f);
+            drawSphere(0.05f, 10, 10);
+            glPopMatrix();
 
-					glColor3f(1.0f, 0.5f, 0.5f);
-					glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-					glutSolidCone(0.08f, 0.5f, 10, 2);
+            glColor3f(1.0f, 0.5f, 0.5f);
+            glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+            drawCone(0.08f, 0.5f, 10, 2);
 
-					glPopMatrix();
-				}
+            glPopMatrix();
+        }
 
-			std::string txt = "Total snowmen: ";
-			txt += std::to_string(
-					(GLint) (SNOWMAN_SPREAD * 2 * SNOWMAN_SPREAD * 2));
+    std::string txt = "Total snowmen: ";
+    txt += std::to_string((GLint)(SNOWMAN_SPREAD * 2 * SNOWMAN_SPREAD * 2));
 
-			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-				(const unsigned char*)txt.c_str());
-
-			std::cout << "Initialized snowmen at (" << x << ", " << y << ", "
-				<< z << ")" << std::endl;
-		}
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRasterPos3f(-1.0f, 5.0f, 0.0f);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)txt.c_str());
+}
 	};
 
 	class Building : public Object
@@ -73,34 +68,71 @@ public:
 		{
 		}
 
-		void init() override
+		void init()
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
 			glTranslatef(x, y / 10, z);
 
-			for (GLfloat i = -BUILDING_SPREAD; i < BUILDING_SPREAD; ++i)
-				for (GLfloat j = -BUILDING_SPREAD; j < BUILDING_SPREAD; ++j)
-				{
-					glPushMatrix();
-					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-					glColor3f(0.121f, 0.616f, 1.0f);
+				for (GLfloat i = -BUILDING_SPREAD; i < BUILDING_SPREAD; ++i)
+					for (GLfloat j = -BUILDING_SPREAD; j < BUILDING_SPREAD; ++j)
+					{
+						glPushMatrix();
+						glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
+						glColor3f(0.121f, 0.616f, 1.0f);
 
-					glutSolidCube(1.0f);
-					glTranslatef(0.0f, 1.0f, 0.0f);
-					glutSolidCube(1.0f);
+						glBegin(GL_QUADS);
+						glVertex3f(-0.5f, -0.5f, 0.5f);
+						glVertex3f(0.5f, -0.5f, 0.5f);
+						glVertex3f(0.5f, 0.5f, 0.5f);
+						glVertex3f(-0.5f, 0.5f, 0.5f);
+						glEnd();
 
-					glColor3f(1.0f, 1.0f, 1.0f);
-					glPopMatrix();
-				}
+						glBegin(GL_QUADS);
+						glVertex3f(-0.5f, -0.5f, -0.5f);
+						glVertex3f(0.5f, -0.5f, -0.5f);
+						glVertex3f(0.5f, 0.5f, -0.5f);
+						glVertex3f(-0.5f, 0.5f, -0.5f);
+						glEnd();
+
+						glBegin(GL_QUADS);
+						glVertex3f(-0.5f, -0.5f, -0.5f);
+						glVertex3f(-0.5f, -0.5f, 0.5f);
+						glVertex3f(-0.5f, 0.5f, 0.5f);
+						glVertex3f(-0.5f, 0.5f, -0.5f);
+						glEnd();
+
+						glBegin(GL_QUADS);
+						glVertex3f(0.5f, -0.5f, -0.5f);
+						glVertex3f(0.5f, -0.5f, 0.5f);
+						glVertex3f(0.5f, 0.5f, 0.5f);
+						glVertex3f(0.5f, 0.5f, -0.5f);
+						glEnd();
+
+						glBegin(GL_QUADS);
+						glVertex3f(-0.5f, 0.5f, -0.5f);
+						glVertex3f(0.5f, 0.5f, -0.5f);
+						glVertex3f(0.5f, 0.5f, 0.5f);
+						glVertex3f(-0.5f, 0.5f, 0.5f);
+						glEnd();
+
+						glBegin(GL_QUADS);
+						glVertex3f(-0.5f, -0.5f, -0.5f);
+						glVertex3f(0.5f, -0.5f, -0.5f);
+						glVertex3f(0.5f, -0.5f, 0.5f);
+						glVertex3f(-0.5f, -0.5f, 0.5f);
+						glEnd();
+
+						glColor3f(1.0f, 1.0f, 1.0f);
+						glPopMatrix();
+					}
 
 			std::string txt = "Total buildings: ";
 			txt += std::to_string(
-					(GLint) (BUILDING_SPREAD * 2 * BUILDING_SPREAD * 2));
+				(GLint)(BUILDING_SPREAD * 2 * BUILDING_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-							 (const unsigned char*) txt.c_str());
+			glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*) txt.c_str());
 		}
 	};
 
@@ -124,10 +156,10 @@ public:
 					glColor3f(0.0f, 0.5f, 0.0f);
 
 					glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-					glutSolidCone(0.25f, 1.0f, 10, 2);
+					drawCone(0.25f, 1.0f, 10, 2);
 
 					glTranslatef(0.0f, 1.0f, 0.0f);
-					glutSolidSphere(0.5f, 10, 10);
+					drawSphere(0.5f, 10, 10);
 
 					glPopMatrix();
 				}
@@ -160,18 +192,18 @@ public:
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
 
 					glColor3f(0.83f, 0.95f, 0.98f);
-					glutSolidCube(1.0f);
+					drawCube(1.0f);
 					glPopMatrix();
 				}
 
 			std::string txt = "Total water blocks: ";
 			txt += std::to_string(
-					(GLint) (WATER_SPREAD * 2 * WATER_SPREAD * 2));
+				(GLint) (WATER_SPREAD * 2 * WATER_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glRasterPos3f(-1.0f, 5.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-							 (const unsigned char*) txt.c_str());
+				(const unsigned char*) txt.c_str());
 		}
 	};
 
@@ -188,23 +220,25 @@ public:
 			glTranslatef(x, y / 10, z);
 
 			for (GLfloat i = -SNOW_SPREAD; i < SNOW_SPREAD; ++i)
+			{
 				for (GLfloat j = -SNOW_SPREAD; j < SNOW_SPREAD; ++j)
 				{
 					glPushMatrix();
 					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
 
 					glColor3f(1.0f, 0.98f, 0.98f);
-					glutSolidCube(1.0f);
+					drawCube(1.0f);
+
 					glPopMatrix();
 				}
+			}
 
 			std::string txt = "Total snow blocks: ";
-			txt += std::to_string((GLint) (SNOW_SPREAD * 2 * SNOW_SPREAD * 2));
+			txt += std::to_string((GLint)(SNOW_SPREAD * 2 * SNOW_SPREAD * 2));
 
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-							 (const unsigned char*) txt.c_str());
+			glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)txt.c_str());
 		}
 	};
 };

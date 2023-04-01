@@ -1,18 +1,13 @@
-#define GET_ERROR() \
-{ \
-	GLenum err; \
-	while ((err = glGetError()) != GL_NO_ERROR) \
-		std::cerr << "OpenGL error " << err << " in " << __func__ << " at line " << __LINE__ << "." << std::endl; \
-}
-
 #include <GL/glew.h>
 #include <cxxopts.hpp>
 #include <iostream>
 
+#include <freetype2/ft2build.h>
+
 #include "../tests/environments/randomModels/world.h"
 #include "./include/model.h"
 
-void initialize(int* argc, char** argv)
+int main(int argc, char** argv)
 {
 	cxxopts::Options options(argv[0]);
 
@@ -22,7 +17,7 @@ void initialize(int* argc, char** argv)
 			cxxopts::value<std::string>()->default_value("800x600"))
 		("h, help", "Show this help message and exit");
 
-	auto result = options.parse(*argc, argv);
+	auto result = options.parse(argc, argv);
 
 	if (result.count("help"))
 	{
@@ -39,18 +34,26 @@ void initialize(int* argc, char** argv)
 
 	int width = 800, height = 600;
 
-	glutInit(argc, argv);
-	glutInitContextVersion(3, 3);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitContextFlags(GLUT_DEBUG);
-	
-	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) >> 1,
-		(glutGet(GLUT_SCREEN_HEIGHT) - height) >> 1);
-	glutInitWindowSize(width, height);
-	glutCreateWindow("Graphics Test 2");
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
-	if (result.count("fullscreen")) glutFullScreen();
+	GLFWwindow* window = glfwCreateWindow(width, height, "Graphics Test 2", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	if (result.count("fullscreen")) glfwMaximizeWindow(window);
 	if (result.count("res"))
 	{
 		std::string res = result["res"].as<std::string>();
@@ -65,24 +68,35 @@ void initialize(int* argc, char** argv)
 		width = std::stoi(res.substr(0, pos));
 		height = std::stoi(res.substr(pos + 1));
 
-		glutReshapeWindow(width, height);
+		glfwSetWindowSize(window, width, height);
 	}
 
-	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
-
 	if (err != GLEW_OK)
 	{
 		std::cerr << "Error: " << glewGetErrorString(err) << std::endl;
+		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	GET_ERROR();
-}
+	FT_Library ft;
+	if (FT_Init_FreeType(&ft))
+	{
+		std::cerr << "Failed to initialize FreeType library." << std::endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
-int main(int argc, char** argv)
-{
-	initialize(&argc, argv);
+	FT_Face face;
+	if (FT_New_Face(ft, "tests/environments/randomModels/Ubuntu-R.ttf", 0, &face))
+	{
+		std::cerr << "Failed to load font file." << std::endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	FT_Set_Pixel_Size(face, 0);
+
 	auto* world = new World({
 		new BuiltinModels::Snowman(20.0f, 0.0f, 0.0f),
 		new BuiltinModels::Building(-20.0f, 0.0f, 0.0f),
@@ -91,14 +105,16 @@ int main(int argc, char** argv)
 		new BuiltinModels::Snow(20.0f, 0.0f, 20.0f),
 		});
 
-	glutDisplayFunc(World::display);
-	glutIdleFunc(World::display);
+	int fbWidth, fbHeight;
+	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+	glViewport(0, 0, fbWidth, fbHeight);
+	Camera::changeSize(window, fbWidth, fbHeight);
 
-	glutReshapeFunc(Camera::changeSize);
-	glutKeyboardFunc(Camera::processNormalKeys);
-	glutSpecialFunc(Camera::processSpecialKeys);
-	glutMouseFunc(Camera::processMouse);
+	glfwSetFramebufferSizeCallback(window, Camera::changeSize);
+	glfwSetKeyCallback(window, Camera::processKeys);
+	glfwSetMouseButtonCallback(window, Camera::processMouse);
 
+	// FIXME: Model loading is broken
 	// auto model = Model(
 	// 	"/home/user/Documents/Graphics Test 2/tests/models/nanosuit/nanosuit.obj",
 	// 	-20.0f, 0.0f, 20.0f);
@@ -111,6 +127,16 @@ int main(int argc, char** argv)
 	world->setPerspectiveIcon(true);
 	world->create();
 
-	glutMainLoop();
+	while (!glfwWindowShouldClose(window))
+	{
+		world->display();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	delete world;
+	glfwTerminate();
+
 	return EXIT_SUCCESS;
 }

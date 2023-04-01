@@ -1,7 +1,7 @@
+/*
 #pragma once
 
-#include <GL/freeglut.h>
-
+#include <GLFW/glfw3.h>
 #include <cmath>
 #include <cstdlib>
 #include <string>
@@ -12,10 +12,9 @@ public:
 	Camera() = default;
 	~Camera() = default;
 
-	static void processNormalKeys(unsigned char, GLint, GLint);
-	static void processSpecialKeys(GLint, GLint, GLint);
-	static void processMouse(GLint, GLint, GLint, GLint);
-	static void changeSize(GLint, GLint);
+	static void processKeys(GLFWwindow*, int, int, int, int);
+	static void processMouse(GLFWwindow*, double, double);
+	static void changeSize(GLFWwindow*, int, int);
 
 	static GLfloat lx;
 	static GLfloat ly;
@@ -49,12 +48,14 @@ GLfloat Camera::fieldOfView = 45.0f;
 GLfloat Camera::nearClip = 0.1f;
 GLfloat Camera::farClip = 1000.0f;
 
-void Camera::processNormalKeys(unsigned char key, GLint, GLint)
+void Camera::processKeys(GLFWwindow* window, int key, int, int action, int)
 {
-	if (key == 27) exit(EXIT_SUCCESS);
-	if (key == 32)
+	GLfloat fraction = 0.1f;
+
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GLFW_TRUE);
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		if (glutGetModifiers() != GLUT_ACTIVE_SHIFT)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 		{
 			x = 0.0f;
 			y = 2.5f;
@@ -66,108 +67,106 @@ void Camera::processNormalKeys(unsigned char key, GLint, GLint)
 		lz = -1.0f;
 
 		angle = 0.0;
-		glutPostRedisplay();
+		glfwPostRedisplay(window);
 	}
-
-	GET_ERROR();
-}
-
-void Camera::processSpecialKeys(GLint key, GLint, GLint)
-{
-	GLfloat fraction = 0.1f;
 
 	switch (key)
 	{
-		case GLUT_KEY_LEFT:
-			if (glutGetModifiers() == GLUT_ACTIVE_SHIFT)
-			{
-				angle -= 0.01f;
-				lx = std::sin(angle);
-				lz = -std::cos(angle);
-			}
-			else
-			{
-				x += lz * fraction;
-				z -= lx * fraction;
-			}
-			break;
-		case GLUT_KEY_RIGHT:
-			if (glutGetModifiers() == GLUT_ACTIVE_SHIFT)
-			{
-				angle += 0.01f;
-				lx = std::sin(angle);
-				lz = -std::cos(angle);
-			}
-			else
-			{
-				x -= lz * fraction;
-				z += lx * fraction;
-			}
-			break;
-		case GLUT_KEY_UP:
-			glutGetModifiers() == GLUT_ACTIVE_SHIFT ? (ly += fraction * 0.1f)
-													: (y += 0.1f);
-			break;
-		case GLUT_KEY_DOWN:
-			glutGetModifiers() == GLUT_ACTIVE_SHIFT ? (ly -= fraction * 0.1f)
-													: (y -= 0.1f);
-			break;
-		default:
-			break;
+	case GLFW_KEY_LEFT:
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			angle -= 0.01f;
+			lx = std::sin(angle);
+			lz = -std::cos(angle);
+		}
+		else
+		{
+			x += lz * fraction;
+			z -= lx * fraction;
+		}
+		break;
+	case GLFW_KEY_RIGHT:
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			angle += 0.01f;
+			lx = std::sin(angle);
+			lz = -std::cos(angle);
+		}
+		else
+		{
+			x -= lz * fraction;
+			z += lx * fraction;
+		}
+		break;
+	case GLFW_KEY_UP:
+		glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly += fraction * 0.1f) : (y += 0.1f);
+		break;
+	case GLFW_KEY_DOWN:
+		glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly -= fraction * 0.1f) : (y -= 0.1f);
+		break;
+	default:
+		break;
 	}
 
-	glutPostRedisplay();
-	GET_ERROR();
+	glfwPostRedisplay(window);
 }
 
-void Camera::processMouse(GLint btn, GLint, GLint, GLint)
+void Camera::processMouse(GLFWwindow* window, double x, double y)
 {
+	static double lastX = x;
+	static double lastY = y;
+
 	GLfloat fraction = 0.1f;
 
-	if (btn == 3)
+	if (x > lastX)
 	{
-		if (glutGetModifiers() == GLUT_ACTIVE_SHIFT)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			x += lx * fraction * 2.0f;
-			z += lz * fraction * 2.0f;
+			angle += 0.01f;
+			lx = std::sin(angle);
+			lz = -std::cos(angle);
 		}
 		else
 		{
-			x += lx * fraction;
-			z += lz * fraction;
+			x -= lz * fraction;
+			z += lx * fraction;
 		}
 	}
-	else if (btn == 4)
+	else if (x < lastX)
 	{
-		if (glutGetModifiers() == GLUT_ACTIVE_SHIFT)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			x -= lx * fraction * 2.0f;
-			z -= lz * fraction * 2.0f;
+			angle -= 0.01f;
+			lx = std::sin(angle);
+			lz = -std::cos(angle);
 		}
 		else
 		{
-			x -= lx * fraction;
-			z -= lz * fraction;
+			x += lz * fraction;
+			z -= lx * fraction;
 		}
 	}
 
-	glutPostRedisplay();
-	GET_ERROR();
+	if (y > lastY) glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly += fraction * 0.1f) : (y += 0.1f);
+	else if (y < lastY) glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly -= fraction * 0.1f) : (y -= 0.1f);
+
+	lastX = x;
+	lastY = y;
+
+	glfwPostRedisplay(window);
 }
 
-void Camera::changeSize(GLint width, GLint height)
+void Camera::changeSize(GLFWwindow*, int w, int h)
 {
-	if (height == 0) height = 1;
-	aspectRatio = (GLfloat) width / (GLfloat) height;
+	if (h == 0) h = 1;
+	aspectRatio = (GLfloat)w / (GLfloat)h;
 
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, w, h);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluPerspective(fieldOfView, aspectRatio, nearClip,
-				   farClip);
+	gluPerspective(fieldOfView, aspectRatio, nearClip, farClip);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	GET_ERROR();
 }

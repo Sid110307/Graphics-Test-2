@@ -20,4 +20,10 @@ set(SOURCE_FILES
 )
 
 add_executable(graphicsTest2 ${SOURCE_FILES})
-target_link_libraries(graphicsTest2 GL GLU glut GLEW assimp stb)
+
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(FreeType REQUIRED)
+
+target_link_libraries(graphicsTest2 GL GLU glfw3 GLEW assimp stb_image freetype)
