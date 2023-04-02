@@ -1,158 +1,111 @@
 #pragma once
 
 #include <utility>
-#include "../../../src/include/object.h"
+#include "../../../src/include/utils.h"
 
-class BuiltinModels
-{
 #define SNOWMAN_SPREAD 3
 #define BUILDING_SPREAD 3
 #define TREE_SPREAD 3
 #define WATER_SPREAD 3
 #define SNOW_SPREAD 3
 
+class BuiltinModels
+{
 public:
 	class Snowman : public Object
 	{
 	public:
-		Snowman(GLfloat _x, GLfloat _y, GLfloat _z) : Object(_x, _y, _z)
+		Snowman(const Shader &_shader, GLfloat _x, GLfloat _y, GLfloat _z) : Object(_shader, _x, _y, _z) {}
+
+		void create() override
 		{
+			glTranslatef(0.0f, 0.0f, 0.0f);
+			glTranslatef(x, y / 10, z);
+
+			for (auto i = -SNOWMAN_SPREAD; i < SNOWMAN_SPREAD; ++i)
+				for (auto j = -SNOWMAN_SPREAD; j < SNOWMAN_SPREAD; ++j)
+				{
+					glPushMatrix();
+					glTranslatef((GLfloat) i * 2.0f, 0.0f, (GLfloat) j * 2.0f);
+					glColor3f(1.0f, 1.0f, 1.0f);
+
+					glTranslatef(0.0f, 0.75f, 0.0f);
+					drawSphere(0.75f, 20, 20);
+
+					glTranslatef(0.0f, 0.95f, 0.0f);
+					drawSphere(0.25f, 20, 20);
+
+					glPushMatrix();
+					glColor3f(0.0f, 0.0f, 0.0f);
+					glTranslatef(0.05f, 0.10f, 0.18f);
+					drawSphere(0.05f, 10, 10);
+					glTranslatef(-0.1f, 0.0f, 0.0f);
+					drawSphere(0.05f, 10, 10);
+					glPopMatrix();
+
+					glColor3f(1.0f, 0.5f, 0.5f);
+					glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+					drawCone(0.08f, 0.5f, 10, 2);
+
+					glPopMatrix();
+				}
+
+			glColor3f(0.0f, 0.0f, 0.0f);
+			putText(shader, "Total snowmen: " + std::to_string(pow((SNOWMAN_SPREAD * 2), 2)),
+					glm::vec3(-1.0f, 5.0f, 0.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		}
-
-		void init()
-{
-    glTranslatef(0.0f, 0.0f, 0.0f);
-    glTranslatef(x, y / 10, z);
-
-    for (GLfloat i = -SNOWMAN_SPREAD; i < SNOWMAN_SPREAD; ++i)
-        for (GLfloat j = -SNOWMAN_SPREAD; j < SNOWMAN_SPREAD; ++j)
-        {
-            glPushMatrix();
-            glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-            glColor3f(1.0f, 1.0f, 1.0f);
-
-            glTranslatef(0.0f, 0.75f, 0.0f);
-            drawSphere(0.75f, 20, 20);
-
-            glTranslatef(0.0f, 0.95f, 0.0f);
-            drawSphere(0.25f, 20, 20);
-
-            glPushMatrix();
-            glColor3f(0.0f, 0.0f, 0.0f);
-            glTranslatef(0.05f, 0.10f, 0.18f);
-            drawSphere(0.05f, 10, 10);
-            glTranslatef(-0.1f, 0.0f, 0.0f);
-            drawSphere(0.05f, 10, 10);
-            glPopMatrix();
-
-            glColor3f(1.0f, 0.5f, 0.5f);
-            glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-            drawCone(0.08f, 0.5f, 10, 2);
-
-            glPopMatrix();
-        }
-
-    std::string txt = "Total snowmen: ";
-    txt += std::to_string((GLint)(SNOWMAN_SPREAD * 2 * SNOWMAN_SPREAD * 2));
-
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glRasterPos3f(-1.0f, 5.0f, 0.0f);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)txt.c_str());
-}
 	};
 
 	class Building : public Object
 	{
 	public:
-		Building(GLfloat _x, GLfloat _y, GLfloat _z) : Object(_x, _y, _z)
-		{
-		}
+		Building(const Shader &_shader, GLfloat _x, GLfloat _y, GLfloat _z) : Object(_shader, _x, _y, _z) {}
 
-		void init()
+		void create() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
 			glTranslatef(x, y / 10, z);
 
-				for (GLfloat i = -BUILDING_SPREAD; i < BUILDING_SPREAD; ++i)
-					for (GLfloat j = -BUILDING_SPREAD; j < BUILDING_SPREAD; ++j)
-					{
-						glPushMatrix();
-						glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
-						glColor3f(0.121f, 0.616f, 1.0f);
+			for (GLint i = -BUILDING_SPREAD; i < BUILDING_SPREAD; ++i)
+				for (GLint j = -BUILDING_SPREAD; j < BUILDING_SPREAD; ++j)
+				{
+					glPushMatrix();
+					glTranslatef((GLfloat) i * 2.0f, 0.0f, (GLfloat) j * 2.0f);
+					glColor3f(0.121f, 0.616f, 1.0f);
 
-						glBegin(GL_QUADS);
-						glVertex3f(-0.5f, -0.5f, 0.5f);
-						glVertex3f(0.5f, -0.5f, 0.5f);
-						glVertex3f(0.5f, 0.5f, 0.5f);
-						glVertex3f(-0.5f, 0.5f, 0.5f);
-						glEnd();
+					glTranslatef(0.0f, 0.5f, 0.0f);
+					drawCube(1.0f);
 
-						glBegin(GL_QUADS);
-						glVertex3f(-0.5f, -0.5f, -0.5f);
-						glVertex3f(0.5f, -0.5f, -0.5f);
-						glVertex3f(0.5f, 0.5f, -0.5f);
-						glVertex3f(-0.5f, 0.5f, -0.5f);
-						glEnd();
+					glTranslatef(0.0f, 0.5f, 0.0f);
+					drawCube(1.0f);
 
-						glBegin(GL_QUADS);
-						glVertex3f(-0.5f, -0.5f, -0.5f);
-						glVertex3f(-0.5f, -0.5f, 0.5f);
-						glVertex3f(-0.5f, 0.5f, 0.5f);
-						glVertex3f(-0.5f, 0.5f, -0.5f);
-						glEnd();
+					glTranslatef(0.0f, 0.5f, 0.0f);
+					drawCube(1.0f);
 
-						glBegin(GL_QUADS);
-						glVertex3f(0.5f, -0.5f, -0.5f);
-						glVertex3f(0.5f, -0.5f, 0.5f);
-						glVertex3f(0.5f, 0.5f, 0.5f);
-						glVertex3f(0.5f, 0.5f, -0.5f);
-						glEnd();
-
-						glBegin(GL_QUADS);
-						glVertex3f(-0.5f, 0.5f, -0.5f);
-						glVertex3f(0.5f, 0.5f, -0.5f);
-						glVertex3f(0.5f, 0.5f, 0.5f);
-						glVertex3f(-0.5f, 0.5f, 0.5f);
-						glEnd();
-
-						glBegin(GL_QUADS);
-						glVertex3f(-0.5f, -0.5f, -0.5f);
-						glVertex3f(0.5f, -0.5f, -0.5f);
-						glVertex3f(0.5f, -0.5f, 0.5f);
-						glVertex3f(-0.5f, -0.5f, 0.5f);
-						glEnd();
-
-						glColor3f(1.0f, 1.0f, 1.0f);
-						glPopMatrix();
-					}
-
-			std::string txt = "Total buildings: ";
-			txt += std::to_string(
-				(GLint)(BUILDING_SPREAD * 2 * BUILDING_SPREAD * 2));
+					glPopMatrix();
+				}
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*) txt.c_str());
+			putText(shader, "Total buildings: " + std::to_string(pow((BUILDING_SPREAD * 2), 2)),
+					glm::vec3(-1.0f, 5.0f, 0.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	};
 
 	class Tree : public Object
 	{
 	public:
-		Tree(GLfloat _x, GLfloat _y, GLfloat _z) : Object(_x, _y, _z)
-		{
-		}
+		Tree(const Shader &_shader, GLfloat _x, GLfloat _y, GLfloat _z) : Object(_shader, _x, _y, _z) {}
 
-		void init() override
+		void create() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
 			glTranslatef(x, y / 10, z);
 
-			for (GLfloat i = -TREE_SPREAD; i < TREE_SPREAD; ++i)
-				for (GLfloat j = -TREE_SPREAD; j < TREE_SPREAD; ++j)
+			for (GLint i = -TREE_SPREAD; i < TREE_SPREAD; ++i)
+				for (GLint j = -TREE_SPREAD; j < TREE_SPREAD; ++j)
 				{
 					glPushMatrix();
-					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
+					glTranslatef((GLfloat) i * 2.0f, 0.0f, (GLfloat) j * 2.0f);
 					glColor3f(0.0f, 0.5f, 0.0f);
 
 					glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -160,85 +113,68 @@ public:
 
 					glTranslatef(0.0f, 1.0f, 0.0f);
 					drawSphere(0.5f, 10, 10);
-
 					glPopMatrix();
 				}
 
-			std::string txt = "Total trees: ";
-			txt += std::to_string((GLint) (TREE_SPREAD * 2 * TREE_SPREAD * 2));
-
-			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-							 (const unsigned char*) txt.c_str());
+			glColor3f(0.0f, 0.0f, 0.0f);
+			putText(shader, "Total trees: " + std::to_string(pow((TREE_SPREAD * 2), 2)),
+					glm::vec3(-1.0f, 5.0f, 0.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	};
 
 	class Water : public Object
 	{
 	public:
-		Water(GLfloat _x, GLfloat _y, GLfloat _z) : Object(_x, _y, _z)
-		{
-		}
+		Water(const Shader &_shader, GLfloat _x, GLfloat _y, GLfloat _z) : Object(_shader, _x, _y, _z) {}
 
-		void init() override
+		void create() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
 			glTranslatef(x, y / 10, z);
 
-			for (GLfloat i = -WATER_SPREAD; i < WATER_SPREAD; ++i)
-				for (GLfloat j = -WATER_SPREAD; j < WATER_SPREAD; ++j)
+			for (GLint i = -WATER_SPREAD; i < WATER_SPREAD; ++i)
+				for (GLint j = -WATER_SPREAD; j < WATER_SPREAD; ++j)
 				{
 					glPushMatrix();
-					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
+					glTranslatef((GLfloat) i * 2.0f, 0.0f, (GLfloat) j * 2.0f);
 
 					glColor3f(0.83f, 0.95f, 0.98f);
 					drawCube(1.0f);
 					glPopMatrix();
 				}
 
-			std::string txt = "Total water blocks: ";
-			txt += std::to_string(
-				(GLint) (WATER_SPREAD * 2 * WATER_SPREAD * 2));
-
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18,
-				(const unsigned char*) txt.c_str());
+			putText(shader, "Total water blocks: " + std::to_string(pow((WATER_SPREAD * 2), 2)),
+					glm::vec3(-1.0f, 5.0f, 0.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	};
 
 	class Snow : public Object
 	{
 	public:
-		Snow(GLfloat _x, GLfloat _y, GLfloat _z) : Object(_x, _y, _z)
-		{
-		}
+		Snow(const Shader &_shader, GLfloat _x, GLfloat _y, GLfloat _z) : Object(_shader, _x, _y, _z) {}
 
-		void init() override
+		void create() override
 		{
 			glTranslatef(0.0f, 0.0f, 0.0f);
 			glTranslatef(x, y / 10, z);
 
-			for (GLfloat i = -SNOW_SPREAD; i < SNOW_SPREAD; ++i)
+			for (GLint i = -SNOW_SPREAD; i < SNOW_SPREAD; ++i)
 			{
-				for (GLfloat j = -SNOW_SPREAD; j < SNOW_SPREAD; ++j)
+				for (GLint j = -SNOW_SPREAD; j < SNOW_SPREAD; ++j)
 				{
 					glPushMatrix();
-					glTranslatef(i * 2.0f, 0.0f, j * 2.0f);
+					glTranslatef((GLfloat) i * 2.0f, 0.0f, (GLfloat) j * 2.0f);
 
 					glColor3f(1.0f, 0.98f, 0.98f);
 					drawCube(1.0f);
-
 					glPopMatrix();
 				}
 			}
 
-			std::string txt = "Total snow blocks: ";
-			txt += std::to_string((GLint)(SNOW_SPREAD * 2 * SNOW_SPREAD * 2));
-
 			glColor3f(0.0f, 0.0f, 0.0f);
-			glRasterPos3f(-1.0f, 5.0f, 0.0f);
-			glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)txt.c_str());
+			putText(shader, "Total snow blocks: " + std::to_string(pow((SNOW_SPREAD * 2), 2)),
+					glm::vec3(-1.0f, 5.0f, 0.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	};
 };

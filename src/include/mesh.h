@@ -1,7 +1,5 @@
 #pragma once
 
-#include "./shader.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,14 +8,16 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "./shader.h"
+
 class Mesh
 {
 public:
 	struct Vertex
 	{
-		glm::vec3 Position;
-		glm::vec3 Normal;
-		glm::vec2 TexCoords;
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec2 texCoords;
 	};
 
 	struct Texture
@@ -27,9 +27,8 @@ public:
 		aiString path;
 	};
 
-	Mesh(std::vector<Vertex>&, std::vector<GLuint>&,
-		std::vector<Texture>&);
-	void draw(Shader&);
+	Mesh(std::vector<Vertex> &, std::vector<GLuint> &, std::vector<Texture> &);
+	void draw(Shader &);
 private:
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
@@ -39,11 +38,8 @@ private:
 	void setupMesh();
 };
 
-
-Mesh::Mesh(std::vector<Vertex>& _vertices, std::vector<GLuint>& _indices,
-	std::vector<Texture>& _textures)
-	: vertices(_vertices), indices(_indices), textures(_textures), VAO(0),
-	VBO(0), EBO(0)
+Mesh::Mesh(std::vector<Vertex> &_vertices, std::vector<GLuint> &_indices, std::vector<Texture> &_textures)
+		: vertices(_vertices), indices(_indices), textures(_textures), VAO(0), VBO(0), EBO(0)
 {
 	setupMesh();
 }
@@ -56,33 +52,27 @@ void Mesh::setupMesh()
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, (long)(vertices.size() * sizeof(Vertex)),
-		&vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (long) (vertices.size() * sizeof(Vertex)), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		(long)(indices.size() * sizeof(GLuint)), &indices[0],
-		GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) (indices.size() * sizeof(GLuint)), &indices[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		(GLvoid*)offsetof(Vertex, Normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, normal));
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		(GLvoid*)offsetof(Vertex, TexCoords));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, texCoords));
 
 	glBindVertexArray(0);
-	
 }
 
-void Mesh::draw(Shader& shader)
+void Mesh::draw(Shader &shader)
 {
-	GLuint diffuseNr = 1;
-	GLuint specularNr = 1;
+	GLuint diffuse = 1;
+	GLuint specular = 1;
 
 	for (GLuint i = 0; i < textures.size(); i++)
 	{
@@ -91,21 +81,19 @@ void Mesh::draw(Shader& shader)
 		std::string number;
 		std::string name = textures[i].type;
 
-		if (name == "texture_diffuse")
-			number = std::to_string(diffuseNr++);
-		else if (name == "texture_specular")
-			number = std::to_string(specularNr++);
+		if (name == "texture_diffuse") number = std::to_string(diffuse++);
+		else if (name == "texture_specular") number = std::to_string(specular++);
 
-		shader.setFloat(("material." + name + number).c_str(), i);
+		std::string uniformName = "material.";
+		uniformName += name + number;
+
+		shader.setFloat(uniformName, (GLfloat) i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT,
-		nullptr);
+	glDrawElements(GL_TRIANGLES, (GLsizei) indices.size(), GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
-
-	
 }

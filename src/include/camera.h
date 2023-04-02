@@ -1,10 +1,9 @@
-/*
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <cmath>
-#include <cstdlib>
 #include <string>
+
+#include <GLFW/glfw3.h>
 
 class Camera
 {
@@ -12,24 +11,16 @@ public:
 	Camera() = default;
 	~Camera() = default;
 
-	static void processKeys(GLFWwindow*, int, int, int, int);
-	static void processMouse(GLFWwindow*, double, double);
-	static void changeSize(GLFWwindow*, int, int);
+	static void processKeys(GLFWwindow*, GLint, GLint, GLint, GLint);
+	static void processMouse(GLFWwindow*, GLdouble, GLdouble);
+	static void changeSize(GLFWwindow*, GLint, GLint);
 
-	static GLfloat lx;
-	static GLfloat ly;
-	static GLfloat lz;
-
-	static GLfloat x;
-	static GLfloat y;
-	static GLfloat z;
-
+	static GLfloat lx, ly, lz;
+	static GLfloat x, y, z;
 	static GLfloat angle;
 	static GLfloat aspectRatio;
-
 	static GLfloat fieldOfView;
-	static GLfloat nearClip;
-	static GLfloat farClip;
+	static GLfloat nearClip, farClip;
 };
 
 // TODO: Make camera movement smoother
@@ -48,7 +39,7 @@ GLfloat Camera::fieldOfView = 45.0f;
 GLfloat Camera::nearClip = 0.1f;
 GLfloat Camera::farClip = 1000.0f;
 
-void Camera::processKeys(GLFWwindow* window, int key, int, int action, int)
+void Camera::processKeys(GLFWwindow* window, GLint key, GLint, GLint action, GLint)
 {
 	GLfloat fraction = 0.1f;
 
@@ -67,102 +58,79 @@ void Camera::processKeys(GLFWwindow* window, int key, int, int action, int)
 		lz = -1.0f;
 
 		angle = 0.0;
-		glfwPostRedisplay(window);
 	}
 
 	switch (key)
 	{
-	case GLFW_KEY_LEFT:
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		{
-			angle -= 0.01f;
-			lx = std::sin(angle);
-			lz = -std::cos(angle);
-		}
-		else
-		{
-			x += lz * fraction;
-			z -= lx * fraction;
-		}
-		break;
-	case GLFW_KEY_RIGHT:
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		{
-			angle += 0.01f;
-			lx = std::sin(angle);
-			lz = -std::cos(angle);
-		}
-		else
-		{
-			x -= lz * fraction;
-			z += lx * fraction;
-		}
-		break;
-	case GLFW_KEY_UP:
-		glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly += fraction * 0.1f) : (y += 0.1f);
-		break;
-	case GLFW_KEY_DOWN:
-		glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly -= fraction * 0.1f) : (y -= 0.1f);
-		break;
-	default:
-		break;
+		case GLFW_KEY_LEFT:
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			{
+				angle -= 0.01f;
+				lx = std::sin(angle);
+				lz = -std::cos(angle);
+			} else
+			{
+				x += lz * fraction;
+				z -= lx * fraction;
+			}
+			break;
+		case GLFW_KEY_RIGHT:
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			{
+				angle += 0.01f;
+				lx = std::sin(angle);
+				lz = -std::cos(angle);
+			} else
+			{
+				x -= lz * fraction;
+				z += lx * fraction;
+			}
+			break;
+		case GLFW_KEY_UP:
+			glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly += fraction * 0.1f) : (y += 0.1f);
+			break;
+		case GLFW_KEY_DOWN:
+			glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly -= fraction * 0.1f) : (y -= 0.1f);
+			break;
+		default:
+			break;
 	}
 
-	glfwPostRedisplay(window);
+//	glfwPostRedisplay(window);
 }
 
-void Camera::processMouse(GLFWwindow* window, double x, double y)
+void Camera::processMouse(GLFWwindow* window, GLdouble _x, GLdouble _y)
 {
-	static double lastX = x;
-	static double lastY = y;
-
 	GLfloat fraction = 0.1f;
+	static GLdouble lastX = _x;
+	static GLdouble lastY = _y;
 
-	if (x > lastX)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			angle += 0.01f;
+			angle += (GLfloat) (_x - lastX) * fraction;
 			lx = std::sin(angle);
 			lz = -std::cos(angle);
-		}
-		else
+		} else
 		{
-			x -= lz * fraction;
-			z += lx * fraction;
-		}
-	}
-	else if (x < lastX)
-	{
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		{
-			angle -= 0.01f;
-			lx = std::sin(angle);
-			lz = -std::cos(angle);
-		}
-		else
-		{
-			x += lz * fraction;
-			z -= lx * fraction;
+			x += (GLfloat) (_x - lastX) * fraction;
+			z += (GLfloat) (_y - lastY) * fraction;
 		}
 	}
 
-	if (y > lastY) glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly += fraction * 0.1f) : (y += 0.1f);
-	else if (y < lastY) glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? (ly -= fraction * 0.1f) : (y -= 0.1f);
+	lastX = _x;
+	lastY = _y;
 
-	lastX = x;
-	lastY = y;
-
-	glfwPostRedisplay(window);
+//	glfwPostRedisplay(window);
 }
 
-void Camera::changeSize(GLFWwindow*, int w, int h)
+void Camera::changeSize(GLFWwindow*, GLint w, GLint h)
 {
 	if (h == 0) h = 1;
-	aspectRatio = (GLfloat)w / (GLfloat)h;
+	aspectRatio = (GLfloat) w / (GLfloat) h;
 
 	glViewport(0, 0, w, h);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 

@@ -4,20 +4,18 @@ project(graphicsTest2)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_BUILD_TYPE Debug)
+set(OpenGL_GL_PREFERENCE GLVND)
 
-set(PROJECT_SOURCE_DIR src)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
 set(SOURCE_FILES
-	${PROJECT_SOURCE_DIR}/main.cpp
-	${PROJECT_SOURCE_DIR}/include/camera.h
-	${PROJECT_SOURCE_DIR}/include/mesh.h
-	${PROJECT_SOURCE_DIR}/include/model.h
-	${PROJECT_SOURCE_DIR}/include/object.h
-	${PROJECT_SOURCE_DIR}/include/shader.h
-	tests/environments/randomModels/objects.h
-	tests/environments/randomModels/world.h
-)
+        src/main.cpp
+        src/include/camera.h
+        src/include/mesh.h
+        src/include/model.h
+        src/include/utils.h
+        src/include/shader.h
+        tests/environments/randomModels/objects.h
+        tests/environments/randomModels/world.h)
 
 add_executable(graphicsTest2 ${SOURCE_FILES})
 
@@ -26,4 +24,8 @@ find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(FreeType REQUIRED)
 
-target_link_libraries(graphicsTest2 GL GLU glfw3 GLEW assimp stb_image freetype)
+target_include_directories(graphicsTest2 PUBLIC ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+        /usr/include/freetype2)
+target_link_libraries(graphicsTest2 ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw freetype assimp stb)
+target_compile_definitions(graphicsTest2 PUBLIC STB_IMAGE_IMPLEMENTATION
+        FRAGMENT_SHADER_PATH="src/lib/fragment.glsl" VERTEX_SHADER_PATH="src/lib/vertex.glsl")

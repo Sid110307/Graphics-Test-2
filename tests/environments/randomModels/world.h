@@ -12,41 +12,34 @@ public:
 	~World() = default;
 
 	static void create();
-	static void display();
-
 	static void addObject(Object*);
-	static void setGridRange(GLfloat);
-
-	static auto setGrid(bool) -> bool;
-	static auto setAxes(bool) -> bool;
-	static auto setPerspectiveIcon(bool) -> bool;
-
-private:
-	static std::vector<Object*> objects;
-	static bool objectInitialized;
-	static GLfloat gridRange;
+	static void setGridRange(GLint);
 
 	static bool grid;
 	static bool axes;
 	static bool perspectiveIcon;
+
+private:
+	static std::vector<Object*> objects;
+	static bool objectCreated;
+	static GLint gridRange;
 
 	static void showGrid();
 	static void showAxes();
 	static void showPerspectiveIcon();
 };
 
-std::vector<Object*> World::objects;
-bool World::objectInitialized = false;
-GLfloat World::gridRange = 10.0f;
-
 bool World::grid = false;
 bool World::axes = false;
 bool World::perspectiveIcon = false;
 
+std::vector<Object*> World::objects;
+bool World::objectCreated = false;
+GLint World::gridRange = 10.0f;
+
 World::World(std::vector<Object*> _objects)
 {
 	objects = std::move(_objects);
-	
 }
 
 void World::create()
@@ -56,58 +49,32 @@ void World::create()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	
-}
-
-void World::display()
-{
 	glClearColor(0.55f, 0.75f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	gluLookAt(Camera::x, Camera::y, Camera::z, Camera::x + Camera::lx,
-		Camera::y + Camera::ly, Camera::z + Camera::lz, 0.0f, 1.0f, 0.0f);
+	gluLookAt(Camera::x, Camera::y, Camera::z, Camera::x + Camera::lx, Camera::y + Camera::ly, Camera::z + Camera::lz,
+			  0.0f, 1.0f, 0.0f);
 
 	if (grid) showGrid();
 	if (axes) showAxes();
 	if (perspectiveIcon) showPerspectiveIcon();
 
-	if (!objectInitialized)
+	if (!objectCreated)
 	{
-		for (auto object : objects) object->init();
-		objectInitialized = true;
+		for (auto object: objects) object->create();
+		objectCreated = true;
 	}
-
-	glutSwapBuffers();
 }
 
 void World::addObject(Object* _object)
 {
 	objects.push_back(_object);
-	
 }
 
-void World::setGridRange(GLfloat range)
+void World::setGridRange(GLint range)
 {
 	gridRange = range;
-}
-
-auto World::setGrid(bool _grid) -> bool
-{
-	grid = _grid;
-	return grid;
-}
-
-auto World::setAxes(bool _axes) -> bool
-{
-	axes = _axes;
-	return axes;
-}
-
-auto World::setPerspectiveIcon(bool _perspectiveIcon) -> bool
-{
-	perspectiveIcon = _perspectiveIcon;
-	return perspectiveIcon;
 }
 
 void World::showGrid()
@@ -115,17 +82,16 @@ void World::showGrid()
 	glBegin(GL_LINES);
 	glColor3f(0.0f, 0.0f, 0.0f);
 
-	for (auto i = -gridRange; i <= gridRange; i += 0.5f)
+	for (GLint i = -gridRange; i <= gridRange; i++)
 	{
-		glVertex3f(i, 0.0f, -gridRange);
-		glVertex3f(i, 0.0f, gridRange);
+		glVertex3f((GLfloat) i, 0.0f, (GLfloat) -gridRange);
+		glVertex3f((GLfloat) i, 0.0f, (GLfloat) gridRange);
 
-		glVertex3f(-gridRange, 0.0f, i);
-		glVertex3f(gridRange, 0.0f, i);
+		glVertex3f((GLfloat) -gridRange, 0.0f, (GLfloat) i);
+		glVertex3f((GLfloat) gridRange, 0.0f, (GLfloat) i);
 	}
 
 	glEnd();
-	
 }
 
 void World::showAxes()
@@ -134,22 +100,25 @@ void World::showAxes()
 	glColor3f(1.0f, 0.0f, 0.0f);
 
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(gridRange / 2.5f, 0.0f, 0.0f);
+	glVertex3f((GLfloat) gridRange / 2.5f, 0.0f, 0.0f);
 	glColor3f(0.0f, 1.0f, 0.0f);
 
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, gridRange / 2.5f, 0.0f);
+	glVertex3f(0.0f, (GLfloat) gridRange / 2.5f, 0.0f);
 	glColor3f(0.0f, 0.0f, 1.0f);
 
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, gridRange / 2.5f);
+	glVertex3f(0.0f, 0.0f, (GLfloat) gridRange / 2.5f);
 	glEnd();
-
-	
 }
 
+// TODO: Implement perspective icon/gizmo in the top right corner of the screen.
 void World::showPerspectiveIcon()
 {
-	// TODO: Implement perspective icon/gizmo at the top right corner of the screen.
-	
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glEnd();
 }

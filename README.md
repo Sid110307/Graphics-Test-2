@@ -6,16 +6,16 @@
 
 - A Graphics card with DirectX 11 (or higher) supported
 - A C++ compiler that supports C++20
-  - [GCC](https://gcc.gnu.org/download/gcc.html)
-  - [Clang](https://clang.llvm.org/download.html)
-  - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
-- OpenGL v4.0 or higher
+    - [GCC](https://gcc.gnu.org/download/gcc.html)
+    - [Clang](https://clang.llvm.org/download.html)
+    - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
+- OpenGL v4.3 or higher
 - GLFW (OpenGL Framework) v3.3 or higher
 - GLEW (GL Extension Wrangler) v4.0 or higher
 - Assimp (Asset Import Library) v5.0 or higher
 - stb_image.h ([https://github.com/nothings/stb](https://github.com/nothings/stb))
-- cxxopts (Lightweight C++ command-line option parser) (I could have used Boost, but idc)
-- FreeType (Font rendering library) v2.10.4 or higher
+- cxxopts (I could have used Boost, but idc)
+- FreeType2 (Font rendering library)
 
 ## Installation
 
