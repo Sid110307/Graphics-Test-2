@@ -114,12 +114,10 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
 	GLFWwindow* window = glfwCreateWindow(width, height, "Graphics Test 2", nullptr, nullptr);
 	if (window == nullptr)
@@ -163,12 +161,11 @@ int main(int argc, char** argv)
 
 	while (!glfwWindowShouldClose(window))
 	{
-		world->create();
-
-		glfwSwapBuffers(window);
 		glfwPollEvents();
+		world->create();
+		glfwSwapBuffers(window);
 	}
 
 	glfwTerminate();
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

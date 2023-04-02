@@ -9,7 +9,7 @@
     - [GCC](https://gcc.gnu.org/download/gcc.html)
     - [Clang](https://clang.llvm.org/download.html)
     - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
-- OpenGL v4.3 or higher
+- OpenGL v3.3 or higher
 - GLFW (OpenGL Framework) v3.3 or higher
 - GLEW (GL Extension Wrangler) v4.0 or higher
 - Assimp (Asset Import Library) v5.0 or higher

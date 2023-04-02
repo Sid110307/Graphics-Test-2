@@ -108,14 +108,22 @@ void drawCube(GLfloat size)
 
 void drawSphere(GLfloat radius, GLint slices, GLint stacks)
 {
-	GLUquadric* quad = gluNewQuadric();
+	GLUquadricObj* quad = gluNewQuadric();
+	gluQuadricDrawStyle(quad, GLU_FILL);
+	gluQuadricNormals(quad, GLU_SMOOTH);
+	gluQuadricTexture(quad, GL_TRUE);
+
 	gluSphere(quad, radius, slices, stacks);
 	gluDeleteQuadric(quad);
 }
 
 void drawCone(GLfloat base, GLfloat height, GLint slices, GLint stacks)
 {
-	GLUquadric* quad = gluNewQuadric();
+	GLUquadricObj* quad = gluNewQuadric();
+	gluQuadricDrawStyle(quad, GLU_FILL);
+	gluQuadricNormals(quad, GLU_SMOOTH);
+	gluQuadricTexture(quad, GL_TRUE);
+
 	gluCylinder(quad, base, 0.0f, height, slices, stacks);
 	gluDeleteQuadric(quad);
 }
