@@ -26,6 +26,7 @@ find_package(FreeType REQUIRED)
 
 target_include_directories(graphicsTest2 PUBLIC ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
         /usr/include/freetype2)
-target_link_libraries(graphicsTest2 ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw freetype assimp stb)
+target_link_libraries(graphicsTest2 ${OPENGL_LIBRARIES} GLEW::GLEW glfw ${FREETYPE_LIBRARIES} /usr/local/lib/libassimp.dylib)
 target_compile_definitions(graphicsTest2 PUBLIC STB_IMAGE_IMPLEMENTATION
         FRAGMENT_SHADER_PATH="src/lib/fragment.glsl" VERTEX_SHADER_PATH="src/lib/vertex.glsl")
+
